@@ -59,29 +59,31 @@ const ChangeModeButton = memo(
   }
 );
 
-const ListItem = ({
-  item,
-  onRemove,
-  onClick,
-}: {
-  item: string;
-  onRemove: (item: string) => void;
-  onClick: (item: string) => void;
-}) => {
-  const handleClick = () => onClick(item);
-  const handleRemoveItem = (e: MouseEvent<HTMLButtonElement>) => {
-    e.stopPropagation();
-    onRemove(item);
-  };
-  return (
-    <li onClick={handleClick} className="li-item">
-      {item}
-      <button className="btn-remove" onClick={handleRemoveItem}>
-        x
-      </button>
-    </li>
-  );
-};
+const ListItem = memo(
+  ({
+    item,
+    onRemove,
+    onClick,
+  }: {
+    item: string;
+    onRemove: (item: string) => void;
+    onClick: (item: string) => void;
+  }) => {
+    const handleClick = () => onClick(item);
+    const handleRemoveItem = (e: MouseEvent<HTMLButtonElement>) => {
+      e.stopPropagation();
+      onRemove(item);
+    };
+    return (
+      <li onClick={handleClick} className="li-item">
+        {item}
+        <button className="btn-remove" onClick={handleRemoveItem}>
+          x
+        </button>
+      </li>
+    );
+  }
+);
 
 const List = () => {
   const counter = useRenderCounter();
@@ -101,9 +103,9 @@ const List = () => {
     setItems((prev) => prev.slice(0, prev.length - 1));
   };
 
-  const handleRemoveItem = (name: string) => {
+  const handleRemoveItem = useCallback((name: string) => {
     setItems((prev) => prev.filter((item) => item.name !== name));
-  };
+  }, []);
 
   const handleAddItem = useCallback(() => {
     index.current++;
@@ -129,7 +131,7 @@ const List = () => {
     return () => clearTimeout(timer);
   });
 
-  const onClickItem = (name: string) => {
+  const onClickItem = useCallback((name: string) => {
     setItems((prev) => {
       return prev.map((item) => {
         if (item.name === name) {
@@ -138,7 +140,7 @@ const List = () => {
         return item;
       });
     });
-  };
+  }, []);
 
   return (
     <ul className="list">
